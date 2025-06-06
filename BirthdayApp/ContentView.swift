@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
-    @State private var friends:
+    @Query private var friends:
     [Friend] = [Friend(name:"Ashly", birthday: .now),
                 Friend(name:"Val", birthday:
                         Date(timeIntervalSince1970: 0))]
+    @Environment(\.modelContext) private var context
     @State private var newName = ""
     @State private var newBirthday = Date.now
     
@@ -35,9 +37,13 @@ struct ContentView: View {
                             .textFieldStyle(.roundedBorder)
                         Button("save") {
                             let newFriend = Friend(name: newName, birthday: newBirthday)
-                            friends.append(newFriend)
+                            context.insert(newFriend)
+                            newName = ""
+                            newBirthday = .now
                         }//end Button
                         .bold()
+                        
+                        .modelContainer(for: Friend.self, inMemory: true)
                     }//end DatePicker
                 }//endVstack
                 .padding()
@@ -48,6 +54,7 @@ struct ContentView: View {
 }//end struct
         
 
-#Preview {
+ #Preview {
     ContentView()
+        
 }
